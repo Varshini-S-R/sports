@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Club Dashboard</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial; padding: 20px;  background-color: green;}
+        h1 { text-align: center; }
+        .section {
+            background: #e8ffe8;
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 10px;
+            border-left: 6px solid green;
+        }
+        .item {
+            background: white;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .no-data {
+            color: red;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Club Dashboard</h1>
+
+<div class="section">
+    <h2>Club Details</h2>
+    <div id="clubDetails"></div>
+</div>
+
+<div class="section">
+    <h2>Registered Players</h2>
+    <div id="playerList"></div>
+</div>
+
+<div class="section">
+    <h2>Games Selected</h2>
+    <div id="gameList"></div>
+</div>
+
+<div class="section">
+    <h2>Upcoming Matches</h2>
+    <div id="matchList"></div>
+</div>
+
+<script>
+    // Fetch the logged-in club
+    const loggedClub = localStorage.getItem("loggedClub");
+    const clubs = JSON.parse(localStorage.getItem("clubs")) || [];
+    const players = JSON.parse(localStorage.getItem("players")) || [];
+    const fixtures = JSON.parse(localStorage.getItem("fixtures")) || []; 
+    // fixtures will be stored when matches are generated
+
+    // Show club info
+    function showClubDetails() {
+        let club = clubs.find(c => c.username === loggedClub);
+
+        if (!club) {
+            document.getElementById("clubDetails").innerHTML =
+                "<p class='no-data'>No details found</p>";
+            return;
+        }
+
+        document.getElementById("clubDetails").innerHTML = `
+            <div class='item'><strong>Club Name:</strong> ${club.username}</div>
+            <div class='item'><strong>Email:</strong> ${club.email}</div>
+            <div class='item'><strong>Phone:</strong> ${club.phone}</div>
+        `;
+    }
+
+    // Show players registered by this club
+    function showPlayers() {
+        let clubPlayers = players.filter(p => p.club === loggedClub);
+
+        if (clubPlayers.length === 0) {
+            document.getElementById("playerList").innerHTML =
+                "<p class='no-data'>No players registered</p>";
+            return;
+        }
+
+        clubPlayers.forEach(p => {
+            document.getElementById("playerList").innerHTML += `
+                <div class='item'>${p.name} — <strong>${p.game}</strong></div>
+            `;
+        });
+    }
+
+    // Show different games this club has selected
+    function showGames() {
+        let clubPlayers = players.filter(p => p.club === loggedClub);
+        let uniqueGames = [...new Set(clubPlayers.map(p => p.game))];
+
+        if (uniqueGames.length === 0) {
+            document.getElementById("gameList").innerHTML =
+                "<p class='no-data'>No games selected</p>";
+            return;
+        }
+
+        uniqueGames.forEach(g => {
+            document.getElementById("gameList").innerHTML += `
+                <div class='item'>${g}</div>
+            `;
+        });
+    }
+
+    // Show upcoming matches for this club
+    function showMatches() {
+        let clubMatches = fixtures.filter(m => 
+            m.team1Club === loggedClub || m.team2Club === loggedClub
+        );
+
+        if (clubMatches.length === 0) {
+            document.getElementById("matchList").innerHTML =
+                "<p class='no-data'>No upcoming matches</p>";
+            return;
+        }
+
+        clubMatches.forEach(m => {
+            document.getElementById("matchList").innerHTML += `
+                <div class='item'>
+                    <strong>${m.team1} (${m.team1Club})</strong>
+                    vs
+                    <strong>${m.team2} (${m.team2Club})</strong>
+                </div>
+            `;
+        });
+    }
+
+    showClubDetails();
+    showPlayers();
+    showGames();
+    showMatches();
+</script>
+
+</body>
+</html>

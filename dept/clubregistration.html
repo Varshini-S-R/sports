@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register Club</title>
+<meta charset="UTF-8">
+<style>
+body{ text-align:center; font-family:Arial; margin-top:40px; background-color: green;}
+input{ width:300px; padding:12px; margin:10px; font-size:18px; }
+button{ padding:12px 25px; font-size:18px; margin:10px; cursor:pointer; }
+#otpBox{ display:none; }
+</style>
+</head>
+
+<body>
+
+<h1>Register New Club</h1>
+
+<input type="text" id="username" placeholder="Club Username">
+<input type="email" id="email" placeholder="Email">
+<input type="tel" id="phone" placeholder="Phone Number">
+
+<button onclick="sendOTP()">Get OTP</button>
+
+<div id="otpBox">
+    <input type="text" id="otpInput" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify & Register</button>
+</div>
+
+<script>
+let generatedOTP = "";
+
+function sendOTP() {
+    let username = document.getElementById("username").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+
+    if(!username || !email || !phone){
+        alert("All fields required!");
+        return;
+    }
+
+    let clubs = JSON.parse(localStorage.getItem("clubs")) || [];
+    let exists = clubs.some(c => c.username.toLowerCase() === username.toLowerCase());
+
+    if(exists){
+        alert("This club name already exists!");
+        return;
+    }
+
+    generatedOTP = Math.floor(100000 + Math.random()*900000).toString();
+    alert("Your OTP is: " + generatedOTP);
+    document.getElementById("otpBox").style.display = "block";
+}
+
+function verifyOTP(){
+    let entered = document.getElementById("otpInput").value;
+
+    if(entered === generatedOTP){
+        let clubs = JSON.parse(localStorage.getItem("clubs")) || [];
+
+        clubs.push({
+            username: document.getElementById("username").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            phone: document.getElementById("phone").value.trim()
+        });
+
+        localStorage.setItem("clubs", JSON.stringify(clubs));
+        localStorage.setItem("loggedClub", document.getElementById("username").value.trim());
+
+        alert("Club Registered Successfully!");
+        window.location.href = "clubdashboard.html";
+    }
+    else{
+        alert("Invalid OTP");
+    }
+}
+</script>
+
+</body>
+</html>

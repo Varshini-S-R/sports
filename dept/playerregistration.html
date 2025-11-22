@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register Player</title>
+<meta charset="UTF-8">
+<style>
+    body { text-align:center; font-family:Arial; margin-top:50px;background-color: green; }
+    input { padding:12px; width:260px; margin:10px; font-size:18px; }
+    button { padding:12px 25px; font-size:18px; background:rgb(239, 101, 32); color:white; border:none; }
+</style>
+</head>
+<body>
+
+<h1>Register Player</h1>
+
+<p id="clubDisplay"></p>
+<p id="gameDisplay"></p>
+
+<input type="text" id="playerName" placeholder="Enter Player Name">
+
+<br><button onclick="registerPlayer()">Register Player</button>
+<br><br>
+<a href="schedulematch.html"><button style="background:rgb(126, 240, 248);">Go to Match Fixtures</button></a>
+
+<script>
+let club = localStorage.getItem("loggedClub");
+let game = localStorage.getItem("selectedGame");
+
+document.getElementById("clubDisplay").innerHTML = "Club: " + club;
+document.getElementById("gameDisplay").innerHTML = "Game: " + game;
+
+function registerPlayer() {
+    let name = document.getElementById("playerName").value;
+    if (!name) { alert("Enter player name!"); return; }
+
+    let players = JSON.parse(localStorage.getItem("players")) || [];
+
+    players.push({
+        name: name,
+        club: club,
+        game: game
+    });
+
+    localStorage.setItem("players", JSON.stringify(players));
+
+    alert("Player Registered!");
+    document.getElementById("playerName").value = "";
+}
+</script>
+
+</body>
+</html>

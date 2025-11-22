@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Club Info</title>
+<meta charset="UTF-8">
+<style>
+body { font-family:Arial; padding:20px;background-color: green; }
+input { width:300px; padding:10px; margin:10px; font-size:18px; }
+button { padding:10px 25px; font-size:18px; margin-top:15px; }
+</style>
+</head>
+<body>
+
+<h1>Edit Club Information</h1>
+
+<div id="form"></div>
+
+<script>
+const loggedClub = localStorage.getItem("loggedClub");
+const clubs = JSON.parse(localStorage.getItem("clubs")) || [];
+
+let club = clubs.find(c => c.username === loggedClub);
+
+document.getElementById("form").innerHTML = `
+    <input type="text" id="email" value="${club.email}" placeholder="Email"><br>
+    <input type="text" id="phone" value="${club.phone}" placeholder="Phone"><br>
+    <button onclick="save()">Save Changes</button>
+`;
+
+function save() {
+    club.email = document.getElementById("email").value;
+    club.phone = document.getElementById("phone").value;
+
+    localStorage.setItem("clubs", JSON.stringify(clubs));
+
+    alert("Information updated!");
+    window.location.href = "clubdashboard.html";
+}
+</script>
+
+</body>
+</html>

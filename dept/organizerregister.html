@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Organizer Register</title>
+<meta charset="UTF-8">
+<style>
+body { text-align:center; font-family:Arial; margin-top:60px;background-color: green; }
+input { width:300px; padding:12px; margin:10px; font-size:18px; }
+button { padding:12px 25px; font-size:18px; cursor:pointer; border-radius:8px; }
+</style>
+</head>
+
+<body>
+<h1>Organizer Registration</h1>
+
+<input type="text" id="name" placeholder="Full Name"><br>
+<input type="email" id="email" placeholder="Email"><br>
+<input type="password" id="password" placeholder="Password"><br>
+
+<button onclick="registerOrganizer()">Register</button>
+
+<script>
+function registerOrganizer() {
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let pass = document.getElementById("password").value.trim();
+
+    if (!name || !email || !pass) {
+        alert("All fields required!");
+        return;
+    }
+
+    let orgs = JSON.parse(localStorage.getItem("organizers")) || [];
+
+    // no duplicate organizer emails
+    if (orgs.some(o => o.email.toLowerCase() === email.toLowerCase())) {
+        alert("Organizer already registered!");
+        return;
+    }
+
+    orgs.push({ name, email, password: pass });
+    localStorage.setItem("organizers", JSON.stringify(orgs));
+
+    alert("Organizer registered successfully!");
+    window.location.href = "organizerlogin.html";
+}
+</script>
+
+</body>
+</html>

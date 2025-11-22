@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Club Login</title>
+<meta charset="UTF-8">
+<style>
+body { text-align:center; font-family:Arial; margin-top:60px; background-color: green;}
+input { width:300px; padding:12px; margin:10px; font-size:18px; }
+button { padding:12px 25px; font-size:18px; margin:10px; cursor:pointer; }
+#otpBox { display:none; }
+</style>
+</head>
+
+<body>
+
+<h1>Club Login</h1>
+
+<input type="text" id="username" placeholder="Enter Club Username">
+
+<button onclick="sendOTP()">Send OTP</button>
+
+<div id="otpBox">
+    <input type="text" id="otpInput" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify OTP</button>
+</div>
+
+<br><br>
+<a href="clubregistration.html"><button>Create New Club</button></a>
+
+<script>
+let generatedOTP = "";
+
+function sendOTP() {
+    let username = document.getElementById("username").value.trim();
+
+    if (!username) {
+        alert("Please enter your club username!");
+        return;
+    }
+
+    let clubs = JSON.parse(localStorage.getItem("clubs")) || [];
+    let found = clubs.find(c => c.username.toLowerCase() === username.toLowerCase());
+
+    if (!found) {
+        alert("This club is not registered!");
+        return;
+    }
+
+    // generate demo OTP
+    generatedOTP = Math.floor(100000 + Math.random()*900000).toString();
+    alert("Your OTP is: " + generatedOTP);
+
+    document.getElementById("otpBox").style.display = "block";
+}
+
+function verifyOTP() {
+    let entered = document.getElementById("otpInput").value;
+
+    if (entered === generatedOTP) {
+        localStorage.setItem("loggedClub", document.getElementById("username").value.trim());
+        alert("Login successful!");
+        window.location.href = "clubdashboard.html";
+    } else {
+        alert("Incorrect OTP!");
+    }
+}
+</script>
+
+</body>
+</html>

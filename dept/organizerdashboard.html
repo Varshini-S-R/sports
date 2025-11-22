@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Organizer Dashboard</title>
+<meta charset="UTF-8">
+<style>
+body{ font-family:Arial; padding:20px;background-color: green; }
+h1{text-align:center;}
+.section{
+    background:#eefaff;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+    border-left:6px solid #bfdbed;
+}
+.item{
+    background:white;
+    padding:12px;
+    border-radius:8px;
+    margin:8px 0;
+}
+button{
+    padding:12px 20px;
+    font-size:16px;
+    margin-bottom:20px;
+    background:red;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Organizer Dashboard</h1>
+
+<button onclick="logout()">Logout</button>
+
+<div class="section">
+    <h2>Registered Clubs</h2>
+    <div id="clubList"></div>
+</div>
+
+<div class="section">
+    <h2>Registered Players</h2>
+    <div id="playerList"></div>
+</div>
+
+<div class="section">
+    <h2>All Match Fixtures</h2>
+    <div id="matchList"></div>
+</div>
+
+<script>
+if (!localStorage.getItem("loggedOrganizer")) {
+    alert("You must log in as organizer!");
+    window.location.href = "organizerlogin.html";
+}
+
+const clubs = JSON.parse(localStorage.getItem("clubs")) || [];
+const players = JSON.parse(localStorage.getItem("players")) || [];
+const fixtures = JSON.parse(localStorage.getItem("fixtures")) || [];
+
+function logout(){
+    localStorage.removeItem("loggedOrganizer");
+    alert("Logged out.");
+    window.location.href = "organizerlogin.html";
+}
+
+// Show clubs
+function showClubs(){
+    let box = document.getElementById("clubList");
+    if (clubs.length === 0){
+        box.innerHTML = "No clubs registered.";
+        return;
+    }
+
+    clubs.forEach(c => {
+        box.innerHTML += `
+            <div class='item'>
+                <b>${c.username}</b> <br>
+                Email: ${c.email}<br>
+                Phone: ${c.phone}
+            </div>`;
+    });
+}
+
+// Show players
+function showPlayers(){
+    let box = document.getElementById("playerList");
+    if (players.length === 0){
+        box.innerHTML = "No players registered.";
+        return;
+    }
+
+    players.forEach(p => {
+        box.innerHTML += `
+            <div class='item'>
+                ${p.name} — ${p.game}<br>
+                Club: ${p.club}
+            </div>`;
+    });
+}
+
+// Show fixtures
+function showFixtures(){
+    let box = document.getElementById("matchList");
+    if (fixtures.length === 0){
+        box.innerHTML = "No fixtures available.";
+        return;
+    }
+
+    fixtures.forEach(m => {
+        box.innerHTML += `
+            <div class='item'>
+                <b>${m.team1} (${m.team1Club})</b>
+                vs
+                <b>${m.team2} (${m.team2Club})</b><br>
+                Game: ${m.game}<br>
+                Time: ${m.time}<br>
+                Venue: ${m.venue}
+            </div>`;
+    });
+}
+
+showClubs();
+showPlayers();
+showFixtures();
+</script>
+
+</body>
+</html>

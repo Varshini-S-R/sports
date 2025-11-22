@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Match Fixtures</title>
+<meta charset="UTF-8">
+<style>
+    body { text-align:center; font-family:Arial; padding:20px; background-color: green;}
+    .match-box {
+        padding:15px;
+        width:420px;
+        margin:12px auto;
+        background:#d1ffd8;
+        border-left:6px solid rgb(242, 72, 42);
+        border-radius:10px;
+        font-size:20px;
+    }
+    select {
+        padding:10px;
+        font-size:20px;
+        margin-bottom:20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Match Fixtures</h1>
+
+<select id="gameSelect" onchange="createFixtures()">
+    <option value="">Select Game</option>
+    <option value="football">Football</option>
+    <option value="basketball">Basketball</option>
+    <option value="long jump">Long Jump</option>
+    <option value="high jump">High Jump</option>
+</select>
+
+<div id="output"></div>
+
+<script>
+function createFixtures() {
+    let game = document.getElementById("gameSelect").value;
+    let output = document.getElementById("output");
+    output.innerHTML = "";
+
+    let players = JSON.parse(localStorage.getItem("players")) || [];
+
+    let gamePlayers = players.filter(p => p.game === game);
+
+    if (gamePlayers.length < 2) {
+        output.innerHTML = "<p>Not enough players!</p>";
+        return;
+    }
+
+    let avail = [...gamePlayers];
+    let matches = [];
+    let fixtureData = [];  // 🔥 will store complete match info (time, venue also)
+
+    // Pre-defined times & venues (you can change)
+    const times = ["9:00 AM", "10:30 AM", "12:00 PM", "2:00 PM", "3:30 PM"];
+    const venues = ["Ground A", "Ground B", "Court 1", "Court 2", "Track Lane 1"];
+
+    let matchIndex = 0;
+
+    while (avail.length >= 2) {
+        let p1 = avail.shift();
+
+        let idx = avail.findIndex(p => p.club !== p1.club);
+        if (idx === -1) {
+            output.innerHTML += `<p>No more valid matches (same club conflict)</p>`;
+            break;
+        }
+
+        let p2 = avail.splice(idx, 1)[0];
+
+        // Display text
+        matches.push(`${p1.name} (${p1.club}) VS ${p2.name} (${p2.club})`);
+
+        // 🔥 Full fixture object (time + venue added here)
+        fixtureData.push({
+            game: game,
+            team1: p1.name,
+            team1Club: p1.club,
+            team2: p2.name,
+            team2Club: p2.club,
+            time: times[matchIndex % times.length],
+            venue: venues[matchIndex % venues.length]
+        });
+
+        matchIndex++;
+    }
+
+    // 🔥 Save all fixtures for all games (merge old + new)
+    let existingFixtures = JSON.parse(localStorage.getItem("fixtures")) || [];
+    let updatedFixtures = existingFixtures.filter(f => f.game !== game); 
+    updatedFixtures = updatedFixtures.concat(fixtureData);
+
+    localStorage.setItem("fixtures", JSON.stringify(updatedFixtures));
+
+    matches.forEach((m, i) => {
+        output.innerHTML += `
+            <div class="match-box">
+                ${m}<br>
+                <b>Time:</b> ${fixtureData[i].time}<br>
+                <b>Venue:</b> ${fixtureData[i].venue}
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>

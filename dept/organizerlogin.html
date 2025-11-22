@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Organizer Login</title>
+<meta charset="UTF-8">
+<style>
+body { text-align:center; font-family:Arial; margin-top:60px; background-color: green;}
+input { width:300px; padding:12px; margin:10px; font-size:18px; }
+button { padding:12px 25px; font-size:18px; cursor:pointer; border-radius:8px; }
+</style>
+</head>
+
+<body>
+<h1>Organizer Login</h1>
+
+<input type="text" id="email" placeholder="Enter Organizer Email"><br>
+<input type="password" id="password" placeholder="Enter Password"><br>
+
+<button onclick="loginOrganizer()">Login</button>
+
+<br><br>
+<a href="organizerregister.html">
+    <button style="background:yellow;">New Organizer? Register</button>
+</a>
+
+<script>
+function loginOrganizer() {
+    let email = document.getElementById("email").value.trim();
+    let pass = document.getElementById("password").value.trim();
+
+    if (!email || !pass) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    let orgs = JSON.parse(localStorage.getItem("organizers")) || [];
+    let found = orgs.find(o =>
+        o.email.toLowerCase() === email.toLowerCase() &&
+        o.password === pass
+    );
+
+    if (!found) {
+        alert("Invalid organizer credentials!");
+        return;
+    }
+
+    // Store active organizer session
+    localStorage.setItem("loggedOrganizer", found.email);
+
+    alert("Login successful!");
+    window.location.href = "organizerdashboard.html";
+}
+</script>
+
+</body>
+</html>
